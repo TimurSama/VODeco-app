@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/VODeco-app/static/css/main.1fcdf659.css",
+    "main.js": "/VODeco-app/static/js/main.d65fb937.js",
+    "index.html": "/VODeco-app/index.html",
+    "main.1fcdf659.css.map": "/VODeco-app/static/css/main.1fcdf659.css.map",
+    "main.d65fb937.js.map": "/VODeco-app/static/js/main.d65fb937.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1fcdf659.css",
+    "static/js/main.d65fb937.js"
+  ]
+}
