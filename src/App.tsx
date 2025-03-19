@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import AppWrapper from './components/layout/AppWrapper'
 import Header from './components/layout/Header'
@@ -22,6 +22,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { WalletProvider } from './contexts/WalletContext'
 import { telegramService } from './services/telegramService'
 import { isTelegramWebApp } from './config/telegram'
+import './App.css'
 
 // Инициализируем Telegram Web App
 telegramService.init();
@@ -29,6 +30,7 @@ telegramService.init();
 function App() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Проверяем, был ли уже показан приветственный экран
@@ -42,13 +44,28 @@ function App() {
     if (isTelegramWebApp() && window.Telegram) {
       window.Telegram.WebApp.ready();
       window.Telegram.WebApp.expand();
+      // Получаем тему
+      const colorScheme = window.Telegram.WebApp.colorScheme;
+      document.documentElement.setAttribute('data-theme', colorScheme);
     }
+    // Имитируем загрузку данных
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
   }, []);
 
   const handleWelcomeClose = () => {
     setShowWelcome(false);
     localStorage.setItem('hasSeenWelcome', 'true');
   };
+
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+      </div>
+    );
+  }
 
   return (
     <AuthProvider>
