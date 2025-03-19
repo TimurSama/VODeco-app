@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .glass {
+    @apply relative border border-white/10;
+    background: rgba(13, 27, 42, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  
+  .glass:hover {
+    background: rgba(13, 27, 42, 0.95);
+  }
+
+  .modal-glass {
+    @apply relative border border-white/10;
+    background: rgba(13, 27, 42, 0.95);
+    box-shadow: 
+      0 20px 25px -5px rgba(0, 0, 0, 0.3),
+      0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  }
+
+  .bg-primary {
+    @apply bg-gradient-eco;
+  }
+
+  .text-primary {
+    @apply text-eco-blue;
+  }
+
+  .hover\:bg-primary-dark:hover {
+    background: linear-gradient(135deg, #00b8b3, #00a187);
+  }
+
+  .eco-border {
+    @apply relative rounded-lg;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, #00cec9, #00b894);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) padding-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Глобальные стили для скроллбара, если он все же нужен где-то */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+:root {
+  --app-height: 100%;
+  --color-deep-blue: #0a192f;
+  --color-eco-green: #00b894;
+  --color-eco-blue: #00cec9;
+  --color-night-blue: #2d3436;
+  --color-modal-bg: #0d1b2a;
+}
+
+html,
+body {
+  @apply bg-deep-blue text-white;
+  height: 100vh;
+  height: var(--app-height);
+}
+
+.mobile-container {
+  @apply relative mx-auto h-full max-w-md overflow-hidden;
+  perspective: 1500px;
+}
+
+.neon-border {
+  @apply relative;
+}
+
+.neon-border::before {
+  content: '';
+  @apply absolute inset-0 rounded-lg;
+  background: linear-gradient(135deg, #00cec9, #00b894);
+  z-index: -1;
+  filter: blur(8px);
+  opacity: 0.5;
+}
+
+.neon-text {
+  @apply font-bold;
+  background: linear-gradient(135deg, #00cec9, #00b894);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 15px rgba(0, 206, 201, 0.5);
+}
+
+@keyframes bubble {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.1);
+  }
+}
+
+.ol-popup {
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #cccccc;
+  bottom: 12px;
+  left: -50px;
+  min-width: 200px;
+}
+
+.ol-popup:after, .ol-popup:before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.ol-popup:after {
+  border-top-color: white;
+  border-width: 10px;
+  left: 48px;
+  margin-left: -10px;
+}
+
+.ol-popup:before {
+  border-top-color: #cccccc;
+  border-width: 11px;
+  left: 48px;
+  margin-left: -11px;
+}
+
+.ol-popup-closer {
+  text-decoration: none;
+  position: absolute;
+  top: 2px;
+  right: 8px;
+}
+
+.ol-popup-closer:after {
+  content: "✖";
+} 
