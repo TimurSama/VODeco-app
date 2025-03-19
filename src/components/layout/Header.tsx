@@ -6,14 +6,14 @@ import WalletDisplay from '../wallet/WalletDisplay';
 import VODecoLogo from '../common/VODecoLogo';
 
 interface HeaderProps {
-  onMenuClick?: () => void;
+  isDrawerOpen: boolean;
+  setIsDrawerOpen: (isOpen: boolean) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
+const Header: React.FC<HeaderProps> = ({ isDrawerOpen, setIsDrawerOpen }) => {
   const navigate = useNavigate();
   const { state, logout } = useAuth();
   const { balance, addTokens } = useWallet();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <header className="bg-white shadow-md">
@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">
             <button
-              onClick={onMenuClick}
+              onClick={() => setIsDrawerOpen(!isDrawerOpen)}
               className="text-gray-500 hover:text-gray-700 focus:outline-none"
             >
               <svg

@@ -1,4 +1,4 @@
-import { isTelegramWebApp, getTelegramUsername } from '../config/telegram';
+import { isTelegramWebApp } from '../config/telegram';
 
 interface PopupButton {
   id: string;
@@ -9,6 +9,7 @@ interface PopupButton {
 class TelegramService {
   private static instance: TelegramService;
   private isInitialized = false;
+  private isDemoMode = true;
 
   private constructor() {}
 
@@ -19,46 +20,47 @@ class TelegramService {
     return TelegramService.instance;
   }
 
-  init() {
+  async init(): Promise<void> {
     if (this.isInitialized) return;
 
-    if (isTelegramWebApp()) {
-      window.Telegram?.WebApp?.ready();
+    try {
+      // В демо-режиме просто устанавливаем флаг инициализации
       this.isInitialized = true;
+      console.log('Demo mode initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize:', error);
+      throw error;
     }
   }
 
-  getUsername() {
-    return getTelegramUsername();
+  getUsername(): string {
+    return 'Demo User';
   }
 
   showMainButton(text: string, callback: () => void) {
-    if (!isTelegramWebApp()) return;
-    const mainButton = window.Telegram?.WebApp?.MainButton;
-    if (mainButton) {
-      mainButton.text = text;
-      mainButton.show();
-      mainButton.onClick(callback);
+    if (this.isDemoMode) {
+      console.log('Demo: Main button clicked', { text });
+      callback();
     }
   }
 
   hideMainButton() {
-    if (!isTelegramWebApp()) return;
-    window.Telegram?.WebApp?.MainButton?.hide();
+    if (this.isDemoMode) {
+      console.log('Demo: Main button hidden');
+    }
   }
 
   showBackButton(callback: () => void) {
-    if (!isTelegramWebApp()) return;
-    const backButton = window.Telegram?.WebApp?.BackButton;
-    if (backButton) {
-      backButton.show();
-      backButton.onClick(callback);
+    if (this.isDemoMode) {
+      console.log('Demo: Back button shown');
+      callback();
     }
   }
 
   hideBackButton() {
-    if (!isTelegramWebApp()) return;
-    window.Telegram?.WebApp?.BackButton?.hide();
+    if (this.isDemoMode) {
+      console.log('Demo: Back button hidden');
+    }
   }
 
   showPopup({
@@ -70,22 +72,32 @@ class TelegramService {
     buttons?: PopupButton[];
     title?: string;
   }) {
-    if (!isTelegramWebApp() || !window.Telegram) return;
-    window.Telegram.WebApp.showPopup({
-      message,
-      buttons,
-      title
-    });
+    if (this.isDemoMode) {
+      console.log('Demo: Popup shown', { message, buttons, title });
+      // В демо-режиме просто показываем alert
+      alert(message);
+    }
   }
 
   showAlert(message: string) {
-    if (!isTelegramWebApp() || !window.Telegram) return;
-    window.Telegram.WebApp.showAlert(message);
+    if (this.isDemoMode) {
+      console.log('Demo: Alert shown', { message });
+      alert(message);
+    }
   }
 
   showConfirm(message: string): Promise<boolean> {
-    if (!isTelegramWebApp() || !window.Telegram) return Promise.resolve(false);
-    return window.Telegram.WebApp.showConfirm(message);
+    if (this.isDemoMode) {
+      console.log('Demo: Confirm shown', { message });
+      return Promise.resolve(window.confirm(message));
+    }
+    return Promise.resolve(false);
+  }
+
+  cleanup() {
+    if (this.isDemoMode) {
+      console.log('Demo: Cleanup completed');
+    }
   }
 }
 

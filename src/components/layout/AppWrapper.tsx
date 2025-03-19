@@ -5,7 +5,7 @@ interface AppWrapperProps {
   children: ReactNode;
 }
 
-export default function AppWrapper({ children }: AppWrapperProps) {
+const AppWrapper: React.FC<AppWrapperProps> = ({ children }) => {
   useEffect(() => {
     const setAppHeight = () => {
       const doc = document.documentElement;
@@ -53,4 +53,6 @@ export default function AppWrapper({ children }: AppWrapperProps) {
       </div>
     </div>
   );
-} 
+};
+
+export default AppWrapper; 

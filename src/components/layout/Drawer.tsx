@@ -13,7 +13,7 @@ interface MenuItem {
 
 interface DrawerProps {
   isOpen: boolean;
-  onClose: () => void;
+  setIsOpen: (isOpen: boolean) => void;
   menuItems: {
     id: string;
     title: string;
@@ -21,12 +21,16 @@ interface DrawerProps {
   }[];
 }
 
-export default function Drawer({ isOpen, onClose, menuItems }: DrawerProps) {
+const Drawer: React.FC<DrawerProps> = ({ isOpen, setIsOpen, menuItems }) => {
   const location = useLocation();
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-50" onClose={handleClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -61,7 +65,7 @@ export default function Drawer({ isOpen, onClose, menuItems }: DrawerProps) {
                         <button
                           type="button"
                           className="rounded-md text-gray-400 hover:text-white focus:outline-none"
-                          onClick={onClose}
+                          onClick={handleClose}
                         >
                           <span className="sr-only">Закрыть меню</span>
                           <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -88,7 +92,7 @@ export default function Drawer({ isOpen, onClose, menuItems }: DrawerProps) {
                                           ? 'text-white bg-primary/20 neon-border'
                                           : 'text-gray-300 hover:text-white hover:bg-white/5'
                                       }`}
-                                      onClick={onClose}
+                                      onClick={handleClose}
                                     >
                                       <item.icon
                                         className={`mr-4 h-6 w-6 flex-shrink-0 transition-colors duration-200 ${
@@ -117,4 +121,6 @@ export default function Drawer({ isOpen, onClose, menuItems }: DrawerProps) {
       </Dialog>
     </Transition.Root>
   );
-} 
+};
+
+export default Drawer; 
