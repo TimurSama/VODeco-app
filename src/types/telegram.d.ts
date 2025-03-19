@@ -1,55 +1,24 @@
 export {};
 
 interface TelegramWebAppUser {
-  id: number;
-  first_name: string;
-  last_name?: string;
   username?: string;
-  language_code?: string;
-  start_param?: string;
 }
 
 interface TelegramWebAppInitData {
-  query_id: string;
-  user: TelegramWebAppUser;
-  auth_date: number;
-  hash: string;
+  user?: TelegramWebAppUser;
 }
 
 interface TelegramWebAppMainButton {
   text: string;
-  color: string;
-  textColor: string;
-  isVisible: boolean;
-  isActive: boolean;
-  isProgressVisible: boolean;
-  setText: (text: string) => void;
-  onClick: (callback: () => void) => void;
-  offClick: (callback: () => void) => void;
   show: () => void;
   hide: () => void;
-  enable: () => void;
-  disable: () => void;
-  showProgress: (leaveActive: boolean) => void;
-  hideProgress: () => void;
+  onClick: (callback: () => void) => void;
 }
 
 interface TelegramWebAppBackButton {
-  isVisible: boolean;
-  onClick: (callback: () => void) => void;
-  offClick: (callback: () => void) => void;
   show: () => void;
   hide: () => void;
-}
-
-interface TelegramWebAppThemeParams {
-  bg_color: string;
-  text_color: string;
-  hint_color: string;
-  link_color: string;
-  button_color: string;
-  button_text_color: string;
-  secondary_bg_color: string;
+  onClick: (callback: () => void) => void;
 }
 
 interface TelegramWebApp {
@@ -58,24 +27,28 @@ interface TelegramWebApp {
   close: () => void;
   MainButton: TelegramWebAppMainButton;
   BackButton: TelegramWebAppBackButton;
-  initData: string;
   initDataUnsafe: TelegramWebAppInitData;
-  platform: string;
-  version: string;
   colorScheme: string;
-  themeParams: TelegramWebAppThemeParams;
-  isExpanded: boolean;
-  viewportHeight: number;
-  viewportStableHeight: number;
-  headerColor: string;
-  backgroundColor: string;
-  isClosingConfirmationEnabled: boolean;
 }
 
 declare global {
   interface Window {
     Telegram?: {
-      WebApp: TelegramWebApp;
+      WebApp: {
+        showPopup: (params: {
+          message: string;
+          buttons?: Array<{
+            id: string;
+            type?: 'default' | 'ok' | 'close' | 'cancel' | 'destructive';
+            text: string;
+          }>;
+          title?: string;
+        }) => void;
+        showAlert: (message: string) => void;
+        ready: () => void;
+        expand: () => void;
+        close: () => void;
+      };
     };
   }
 } 

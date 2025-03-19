@@ -35,6 +35,10 @@ function App() {
     if (!hasSeenWelcome) {
       setShowWelcome(true);
     }
+
+    // Инициализируем Telegram Web App и расширяем окно
+    telegramService.init();
+    window.Telegram?.WebApp?.expand();
   }, []);
 
   const handleWelcomeClose = () => {

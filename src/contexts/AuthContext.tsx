@@ -1,14 +1,29 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { AuthState, User } from '../types/auth';
 import { authService } from '../services/authService';
+import { isTelegramWebApp, getTelegramUsername } from '../config/telegram';
 
-interface AuthContextType extends AuthState {
-  login: () => Promise<void>;
-  logout: () => void;
-  updateSettings: (settings: Partial<User['settings']>) => void;
+interface User {
+  username: string;
+  id?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  settings?: Record<string, any>;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+interface AuthState {
+  isAuthenticated: boolean;
+  user: User | null;
+  loading: boolean;
+}
+
+interface AuthContextType {
+  state: AuthState;
+  login: (username: string, password: string) => Promise<void>;
+  logout: () => void;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -19,47 +34,85 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, setState] = useState<AuthState>(authService.getState());
+  const [state, setState] = useState<AuthState>({
+    isAuthenticated: false,
+    user: null,
+    loading: true
+  });
+
+  const handleTelegramAuth = async () => {
+    try {
+      const username = getTelegramUsername();
+      if (username) {
+        setState({
+          isAuthenticated: true,
+          user: { username },
+          loading: false
+        });
+      }
+    } catch (error) {
+      console.error('Telegram auth failed:', error);
+      setState({ ...state, loading: false });
+    }
+  };
 
   useEffect(() => {
-    const updateState = () => {
-      setState(authService.getState());
+    const checkAuth = async () => {
+      try {
+        if (isTelegramWebApp()) {
+          await handleTelegramAuth();
+        } else {
+          const savedUser = localStorage.getItem('user');
+          if (savedUser) {
+            setState({
+              isAuthenticated: true,
+              user: JSON.parse(savedUser),
+              loading: false
+            });
+          } else {
+            setState({ ...state, loading: false });
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        setState({ ...state, loading: false });
+      }
     };
 
-    // Обновляем состояние при изменении в authService
-    window.addEventListener('storage', updateState);
-    return () => window.removeEventListener('storage', updateState);
+    checkAuth();
   }, []);
 
-  const login = async () => {
+  const login = async (username: string, password: string) => {
     try {
-      await authService.login();
-      setState(authService.getState());
+      setState({ ...state, loading: true });
+      const user = await authService.login(username, password);
+      setState({
+        isAuthenticated: true,
+        user,
+        loading: false
+      });
+      localStorage.setItem('user', JSON.stringify(user));
     } catch (error) {
-      console.error('Login error:', error);
+      setState({ ...state, loading: false });
       throw error;
     }
   };
 
   const logout = () => {
-    authService.logout();
-    setState(authService.getState());
+    localStorage.removeItem('user');
+    setState({
+      isAuthenticated: false,
+      user: null,
+      loading: false
+    });
   };
 
-  const updateSettings = (settings: Partial<User['settings']>) => {
-    authService.updateUserSettings(settings);
-    setState(authService.getState());
-  };
+  if (state.loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <AuthContext.Provider
-      value={{
-        ...state,
-        login,
-        logout,
-        updateSettings,
-      }}
-    >
+    <AuthContext.Provider value={{ state, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

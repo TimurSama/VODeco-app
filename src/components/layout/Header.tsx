@@ -1,68 +1,63 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useWallet } from '../../contexts/WalletContext';
 import { useAuth } from '../../contexts/AuthContext';
-import VODecoLogo from '../common/VODecoLogo';
+import { useWallet } from '../../contexts/WalletContext';
 import WalletDisplay from '../wallet/WalletDisplay';
-import { PlusIcon, MenuIcon } from '@heroicons/react/outline';
+import VODecoLogo from '../common/VODecoLogo';
 
 interface HeaderProps {
-  onMenuClick: () => void;
+  onMenuClick?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const { state, logout } = useAuth();
   const { balance, addTokens } = useWallet();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
-  const handleAddTokens = (amount: number) => {
-    addTokens(amount);
-  };
-
   return (
-    <header className="bg-eco-dark/80 backdrop-blur-sm fixed w-full z-50">
+    <header className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-4">
+        <div className="flex justify-between items-center py-4">
+          <div className="flex items-center">
             <button
               onClick={onMenuClick}
-              className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+              className="text-gray-500 hover:text-gray-700 focus:outline-none"
             >
-              <MenuIcon className="h-5 w-5 text-white" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
             </button>
-            <VODecoLogo className="text-white" />
+            <div className="ml-4 cursor-pointer" onClick={() => navigate('/')}>
+              <VODecoLogo />
+            </div>
           </div>
 
           <div className="flex items-center space-x-4">
-            {isAuthenticated ? (
-              <div className="flex items-center space-x-4">
-                <WalletDisplay
-                  balance={balance}
-                  className="text-white"
-                />
+            {state.isAuthenticated ? (
+              <>
+                <WalletDisplay balance={balance} />
                 <button
-                  onClick={() => handleAddTokens(100)}
-                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-                >
-                  <PlusIcon className="h-5 w-5 text-white" />
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                  onClick={logout}
+                  className="text-gray-500 hover:text-gray-700"
                 >
                   Выйти
                 </button>
-              </div>
+              </>
             ) : (
               <button
-                onClick={() => navigate('/login')}
-                className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                onClick={() => navigate('/profile')}
+                className="text-gray-500 hover:text-gray-700"
               >
                 Войти
               </button>
