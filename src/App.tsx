@@ -21,6 +21,7 @@ import WelcomeModal from './components/welcome/WelcomeModal'
 import { AuthProvider } from './contexts/AuthContext'
 import { WalletProvider } from './contexts/WalletContext'
 import { telegramService } from './services/telegramService'
+import { isTelegramWebApp } from './config/telegram'
 
 // Инициализируем Telegram Web App
 telegramService.init();
@@ -38,7 +39,10 @@ function App() {
 
     // Инициализируем Telegram Web App и расширяем окно
     telegramService.init();
-    window.Telegram?.WebApp?.expand();
+    if (isTelegramWebApp() && window.Telegram) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand();
+    }
   }, []);
 
   const handleWelcomeClose = () => {

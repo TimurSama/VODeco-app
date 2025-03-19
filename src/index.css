@@ -102,6 +102,11 @@ body {
   overflow-x: hidden;
   background-color: var(--tg-theme-bg-color);
   color: var(--tg-theme-text-color);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -109,6 +114,10 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: auto;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
 .mobile-container {
@@ -205,4 +214,9 @@ body {
 body {
   background-color: var(--tg-theme-bg-color);
   color: var(--tg-theme-text-color);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
 } 
