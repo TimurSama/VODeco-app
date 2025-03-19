@@ -42,11 +42,27 @@ function App() {
     // Инициализируем Telegram Web App и расширяем окно
     telegramService.init();
     if (isTelegramWebApp() && window.Telegram) {
+      // Инициализация Telegram Web App
       window.Telegram.WebApp.ready();
+
+      // Устанавливаем обработчик изменения viewport
+      window.Telegram.WebApp.onEvent('viewportChanged', ({ isStateStable }) => {
+        if (isStateStable) {
+          const height = window.Telegram.WebApp.viewportStableHeight;
+          document.documentElement.style.setProperty('--tg-viewport-stable-height', `${height}px`);
+        }
+        const height = window.Telegram.WebApp.viewportHeight;
+        document.documentElement.style.setProperty('--tg-viewport-height', `${height}px`);
+      });
+
+      // Расширяем на весь экран
       window.Telegram.WebApp.expand();
-      // Получаем тему
-      const colorScheme = window.Telegram.WebApp.colorScheme;
-      document.documentElement.setAttribute('data-theme', colorScheme);
+
+      // Получаем начальные значения высоты
+      const initialStableHeight = window.Telegram.WebApp.viewportStableHeight;
+      const initialHeight = window.Telegram.WebApp.viewportHeight;
+      document.documentElement.style.setProperty('--tg-viewport-stable-height', `${initialStableHeight}px`);
+      document.documentElement.style.setProperty('--tg-viewport-height', `${initialHeight}px`);
     }
     // Имитируем загрузку данных
     setTimeout(() => {

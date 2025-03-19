@@ -77,6 +77,8 @@
 }
 
 :root {
+  --tg-viewport-height: 100vh;
+  --tg-viewport-stable-height: 100vh;
   --app-height: 100%;
   --color-deep-blue: #0a192f;
   --color-eco-green: #00b894;
@@ -94,13 +96,17 @@
 html,
 body {
   @apply bg-deep-blue text-white;
-  height: 100%;
-  height: var(--app-height);
   margin: 0;
   padding: 0;
+  height: 100vh;
+  height: var(--tg-viewport-height);
   width: 100%;
   overflow: hidden;
   position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   -webkit-overflow-scrolling: touch;
   background-color: var(--tg-theme-bg-color);
   color: var(--tg-theme-text-color);
@@ -112,14 +118,26 @@ body {
 }
 
 #root {
-  width: 100%;
   height: 100%;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-container {
+  flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  position: fixed;
-  top: 0;
-  left: 0;
+  height: var(--tg-viewport-stable-height);
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 .mobile-container {
@@ -227,4 +245,5 @@ code {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 } 
