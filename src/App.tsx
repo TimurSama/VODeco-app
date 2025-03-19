@@ -45,24 +45,26 @@ function App() {
       // Инициализация Telegram Web App
       window.Telegram.WebApp.ready();
 
-      // Устанавливаем обработчик изменения viewport
-      window.Telegram.WebApp.onEvent('viewportChanged', ({ isStateStable }) => {
-        if (isStateStable) {
-          const height = window.Telegram.WebApp.viewportStableHeight;
-          document.documentElement.style.setProperty('--tg-viewport-stable-height', `${height}px`);
-        }
-        const height = window.Telegram.WebApp.viewportHeight;
-        document.documentElement.style.setProperty('--tg-viewport-height', `${height}px`);
-      });
-
       // Расширяем на весь экран
       window.Telegram.WebApp.expand();
 
-      // Получаем начальные значения высоты
-      const initialStableHeight = window.Telegram.WebApp.viewportStableHeight;
-      const initialHeight = window.Telegram.WebApp.viewportHeight;
-      document.documentElement.style.setProperty('--tg-viewport-stable-height', `${initialStableHeight}px`);
-      document.documentElement.style.setProperty('--tg-viewport-height', `${initialHeight}px`);
+      // Устанавливаем начальные значения высоты
+      const updateViewportHeight = () => {
+        if (window.Telegram?.WebApp) {
+          const stableHeight = window.Telegram.WebApp.viewportStableHeight;
+          const height = window.Telegram.WebApp.viewportHeight;
+          document.documentElement.style.setProperty('--tg-viewport-stable-height', `${stableHeight}px`);
+          document.documentElement.style.setProperty('--tg-viewport-height', `${height}px`);
+        }
+      };
+
+      // Обновляем высоту при изменении размера окна
+      window.addEventListener('resize', updateViewportHeight);
+      updateViewportHeight();
+
+      return () => {
+        window.removeEventListener('resize', updateViewportHeight);
+      };
     }
     // Имитируем загрузку данных
     setTimeout(() => {
