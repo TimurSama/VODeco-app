@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/VODeco-app/static/css/main.738c474d.css",
-    "main.js": "/VODeco-app/static/js/main.02bf487a.js",
+    "main.js": "/VODeco-app/static/js/main.2bd6bdbf.js",
     "index.html": "/VODeco-app/index.html",
     "main.738c474d.css.map": "/VODeco-app/static/css/main.738c474d.css.map",
-    "main.02bf487a.js.map": "/VODeco-app/static/js/main.02bf487a.js.map"
+    "main.2bd6bdbf.js.map": "/VODeco-app/static/js/main.2bd6bdbf.js.map"
   },
   "entrypoints": [
     "static/css/main.738c474d.css",
-    "static/js/main.02bf487a.js"
+    "static/js/main.2bd6bdbf.js"
   ]
 }
