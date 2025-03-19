@@ -1,128 +1,80 @@
-import { TelegramWebApp, TelegramUser } from '../types/telegram';
-
-// Заглушка для локальной разработки
-const mockWebApp: TelegramWebApp = {
-  ready: () => console.log('Telegram Web App ready'),
-  expand: () => console.log('Telegram Web App expand'),
-  close: () => console.log('Telegram Web App close'),
-  MainButton: {
-    show: () => console.log('MainButton show'),
-    hide: () => console.log('MainButton hide'),
-    setText: (text: string) => console.log('MainButton setText:', text),
-    onClick: (callback: () => void) => console.log('MainButton onClick'),
-  },
-  initData: '',
-  initDataUnsafe: {
-    user: {
-      id: 123456789,
-      first_name: 'Test User',
-      username: 'testuser',
-    },
-    auth_date: Date.now(),
-    hash: 'test_hash',
-  },
-};
-
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp: TelegramWebApp;
-    };
-  }
-}
+import { TELEGRAM_BOT_TOKEN, TELEGRAM_WEB_APP_URL, isTelegramWebApp, getTelegramUser } from '../config/telegram';
 
 class TelegramService {
-  private webApp: TelegramWebApp | null = null;
+  private static instance: TelegramService;
+  private isInitialized = false;
 
-  constructor() {
-    // В локальной разработке используем заглушку
-    this.webApp = window.Telegram?.WebApp || mockWebApp;
+  private constructor() {}
+
+  static getInstance(): TelegramService {
+    if (!TelegramService.instance) {
+      TelegramService.instance = new TelegramService();
+    }
+    return TelegramService.instance;
   }
 
-  isAvailable(): boolean {
-    return !!this.webApp;
-  }
+  init() {
+    if (this.isInitialized) return;
 
-  getUser(): TelegramUser | null {
-    return this.webApp?.initDataUnsafe.user || null;
-  }
-
-  getUserId(): number | null {
-    return this.webApp?.initDataUnsafe.user?.id || null;
-  }
-
-  getUsername(): string | null {
-    return this.webApp?.initDataUnsafe.user?.username || null;
-  }
-
-  getFirstName(): string | null {
-    return this.webApp?.initDataUnsafe.user?.first_name || null;
-  }
-
-  getLastName(): string | null {
-    return this.webApp?.initDataUnsafe.user?.last_name || null;
-  }
-
-  getLanguageCode(): string | null {
-    return this.webApp?.initDataUnsafe.user?.language_code || null;
-  }
-
-  getStartParam(): string | null {
-    return this.webApp?.initDataUnsafe.user?.start_param || null;
-  }
-
-  getTheme(): 'light' | 'dark' {
-    return this.webApp?.colorScheme || 'light';
-  }
-
-  getThemeParams() {
-    return this.webApp?.themeParams || {};
-  }
-
-  expand() {
-    if (this.webApp) {
-      this.webApp.expand();
+    if (isTelegramWebApp()) {
+      window.Telegram.WebApp.ready();
+      this.isInitialized = true;
     }
   }
 
-  close() {
-    if (this.webApp) {
-      this.webApp.close();
-    }
+  getUser() {
+    return getTelegramUser();
   }
 
   showMainButton(text: string, callback: () => void) {
-    if (this.webApp?.MainButton) {
-      this.webApp.MainButton.setText(text);
-      this.webApp.MainButton.onClick(callback);
-      this.webApp.MainButton.show();
-    }
+    if (!isTelegramWebApp()) return;
+
+    const mainButton = window.Telegram.WebApp.MainButton;
+    mainButton.text = text;
+    mainButton.onClick(callback);
+    mainButton.show();
   }
 
   hideMainButton() {
-    if (this.webApp?.MainButton) {
-      this.webApp.MainButton.hide();
-    }
+    if (!isTelegramWebApp()) return;
+    window.Telegram.WebApp.MainButton.hide();
   }
 
   showBackButton(callback: () => void) {
-    if (this.webApp?.BackButton) {
-      this.webApp.BackButton.onClick(callback);
-      this.webApp.BackButton.show();
-    }
+    if (!isTelegramWebApp()) return;
+
+    const backButton = window.Telegram.WebApp.BackButton;
+    backButton.onClick(callback);
+    backButton.show();
   }
 
   hideBackButton() {
-    if (this.webApp?.BackButton) {
-      this.webApp.BackButton.hide();
-    }
+    if (!isTelegramWebApp()) return;
+    window.Telegram.WebApp.BackButton.hide();
   }
 
-  // Метод для проверки подписи данных от Telegram
-  validateInitData(initData: string): boolean {
-    // В локальной разработке всегда возвращаем true
-    return true;
+  showPopup(params: {
+    title: string;
+    message: string;
+    buttons?: Array<{
+      id: string;
+      type?: 'default' | 'ok' | 'close' | 'cancel' | 'destructive';
+      text: string;
+    }>;
+  }) {
+    if (!isTelegramWebApp()) return;
+    window.Telegram.WebApp.showPopup(params);
+  }
+
+  showAlert(message: string) {
+    if (!isTelegramWebApp()) return;
+    window.Telegram.WebApp.showAlert(message);
+  }
+
+  showConfirm(message: string): Promise<boolean> {
+    if (!isTelegramWebApp()) return Promise.resolve(false);
+    return window.Telegram.WebApp.showConfirm(message);
   }
 }
 
-export const telegramService = new TelegramService(); 
+export const telegramService = TelegramService.getInstance(); 

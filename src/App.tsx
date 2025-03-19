@@ -20,7 +20,10 @@ import { menuItems } from './data/menuItems'
 import WelcomeModal from './components/welcome/WelcomeModal'
 import { AuthProvider } from './contexts/AuthContext'
 import { WalletProvider } from './contexts/WalletContext'
-import { initTelegramWebApp } from './config/telegram'
+import { telegramService } from './services/telegramService'
+
+// Инициализируем Telegram Web App
+telegramService.init();
 
 function App() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -32,7 +35,6 @@ function App() {
     if (!hasSeenWelcome) {
       setShowWelcome(true);
     }
-    initTelegramWebApp();
   }, []);
 
   const handleWelcomeClose = () => {
